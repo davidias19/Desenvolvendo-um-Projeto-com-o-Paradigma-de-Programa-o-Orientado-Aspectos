@@ -1,0 +1,44 @@
+# Desenvolvendo-um-Projeto-com-o-Paradigma-de-Programa-o-Orientado-Aspectos
+
+# Java
+
+public class ContaBancaria {
+    private String tipo;
+    private double saldo;
+
+    public ContaBancaria(String tipo, double saldo) {
+        this.tipo = tipo;
+        this.saldo = saldo;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public void sacar(double valor) {
+        if (saldo >= valor) {
+            saldo -= valor;
+            System.out.println("Saque de " + valor + " realizado na conta " + tipo);
+        } else {
+            System.out.println("Saldo insuficiente na conta " + tipo);
+        }
+    }
+}
+
+# AspectJ
+
+public aspect VerificarSaldoAspect {
+    pointcut realizarSaque(ContaBancaria conta, double valor):
+        call(void ContaBancaria.sacar(double)) && target(conta) && args(valor);
+
+    before(ContaBancaria conta, double valor): realizarSaque(conta, valor) {
+        if (conta.getSaldo() < valor) {
+            System.out.println("Saldo insuficiente na conta " + conta.getTipo());
+            throw new SaldoInsuficienteException("Saldo insuficiente na conta " + conta.getTipo());
+        }
+    }
+}
